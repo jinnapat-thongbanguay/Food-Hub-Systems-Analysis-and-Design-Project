@@ -28,22 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnConfirm = new Button();
+            btnNext = new Button();
             numPeople = new NumericUpDown();
             dtpBooking = new DateTimePicker();
             cmbPromo = new ComboBox();
             lblResName = new Label();
+            btnBack = new Button();
             ((System.ComponentModel.ISupportInitialize)numPeople).BeginInit();
             SuspendLayout();
             // 
-            // btnConfirm
+            // btnNext
             // 
-            btnConfirm.Location = new Point(336, 318);
-            btnConfirm.Name = "btnConfirm";
-            btnConfirm.Size = new Size(119, 31);
-            btnConfirm.TabIndex = 9;
-            btnConfirm.Text = "Confirm";
-            btnConfirm.UseVisualStyleBackColor = true;
+            btnNext.Location = new Point(336, 318);
+            btnNext.Name = "btnNext";
+            btnNext.Size = new Size(119, 31);
+            btnNext.TabIndex = 9;
+            btnNext.Text = "Next";
+            btnNext.UseVisualStyleBackColor = true;
+            btnNext.Click += btnNext_Click;
             // 
             // numPeople
             // 
@@ -66,6 +68,7 @@
             cmbPromo.Name = "cmbPromo";
             cmbPromo.Size = new Size(283, 28);
             cmbPromo.TabIndex = 6;
+            cmbPromo.SelectedIndexChanged += cmbPromo_SelectedIndexChanged;
             // 
             // lblResName
             // 
@@ -76,12 +79,23 @@
             lblResName.TabIndex = 5;
             lblResName.Text = "ResName";
             // 
+            // btnBack
+            // 
+            btnBack.Location = new Point(259, 63);
+            btnBack.Name = "btnBack";
+            btnBack.Size = new Size(60, 25);
+            btnBack.TabIndex = 10;
+            btnBack.Text = "Back";
+            btnBack.UseVisualStyleBackColor = true;
+            btnBack.Click += btnBack_Click;
+            // 
             // BookingForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(btnConfirm);
+            Controls.Add(btnBack);
+            Controls.Add(btnNext);
             Controls.Add(numPeople);
             Controls.Add(dtpBooking);
             Controls.Add(cmbPromo);
@@ -95,10 +109,11 @@
 
         #endregion
 
-        private Button btnConfirm;
+        private Button btnNext;
         private NumericUpDown numPeople;
         private DateTimePicker dtpBooking;
         private ComboBox cmbPromo;
         private Label lblResName;
+        private Button btnBack;
     }
 }

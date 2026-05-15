@@ -17,17 +17,11 @@ namespace FoodHubApp // ตรวจสอบชื่อ Namespace ให้ต
         // 1. เมื่อเปิดหน้าจอมา ให้โหลดร้านอาหารทั้งหมดทันที
         private void Form1_Load(object sender, EventArgs e)
         {
-            // เมื่อเปิดแอป ให้ดึงร้านอาหารมาโชว์ทันที (ส่งค่าว่างไปเพื่อให้ SQL ดึงทุกร้าน)
+            // ต้องมีบรรทัดนี้ เพื่อดึงข้อมูลร้านมาใส่ในตาราง
             dgvData.DataSource = _service.SearchRestaurants("");
 
-            // แถม: ตั้งค่าให้คอลัมน์ขยายเต็มพื้นที่ตาราง จะได้ดูสวยงาม
+            // บรรทัดนี้ช่วยให้ตารางขยายเต็มหน้าจอ ดูสวยขึ้น
             dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            // แถม: ซ่อนคอลัมน์ ID ไม่ให้ User เห็น (แต่เรายังใช้ ID ในการทำงานเบื้องหลังได้)
-            if (dgvData.Columns.Contains("restaurantid"))
-            {
-                dgvData.Columns["restaurantid"].Visible = false;
-            }
         }
 
         // 1. สร้างฟังก์ชันสำหรับโหลดข้อมูล
@@ -95,6 +89,31 @@ namespace FoodHubApp // ตรวจสอบชื่อ Namespace ให้ต
         {
             // ทุกครั้งที่พิมพ์หรือลบตัวอักษร ข้อมูลจะเปลี่ยนตามทันที
             dgvData.DataSource = _service.SearchRestaurants(txtSearch.Text);
+        }
+
+        private void dgvData_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // 1. ป้องกัน Error เวลาคลิกแถวหัวตาราง
+            if (e.RowIndex < 0) return;
+
+            // ดึงข้อมูลพื้นฐานไว้ก่อน
+            int id = Convert.ToInt32(dgvData.Rows[e.RowIndex].Cells["restaurantid"].Value);
+            string name = dgvData.Rows[e.RowIndex].Cells["name"].Value?.ToString() ?? "";
+
+            // 2. ใช้ if...else เพื่อ "เลือก" ทางใดทางหนึ่งเท่านั้น
+            // *** ต้องเช็คชื่อคอลัมน์ปุ่มรีวิวก่อนเสมอ ***
+            if (dgvData.Columns[e.ColumnIndex].Name == "btnViewReview")
+            {
+                // ถ้ากดปุ่มรีวิว ให้เปิดแค่ ReviewForm แล้วจบการทำงาน (ไม่ไปทำ else)
+                ReviewForm reviewForm = new ReviewForm(id, name);
+                reviewForm.ShowDialog();
+            }
+            else
+            {
+                // ถ้ากดส่วนอื่นๆ ในแถว (ที่ไม่ใช่ปุ่มรีวิว) ให้ไปหน้าจอง
+                BookingForm bookingForm = new BookingForm(id, name);
+                bookingForm.ShowDialog();
+            }
         }
     }
 }

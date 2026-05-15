@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             dgvData = new DataGridView();
+            btnViewReview = new DataGridViewButtonColumn();
             btnSearch = new Button();
             txtSearch = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
@@ -37,12 +38,22 @@
             // dgvData
             // 
             dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvData.Columns.AddRange(new DataGridViewColumn[] { btnViewReview });
             dgvData.Location = new Point(164, 118);
             dgvData.Name = "dgvData";
             dgvData.RowHeadersWidth = 51;
             dgvData.Size = new Size(498, 247);
             dgvData.TabIndex = 0;
-            dgvData.CellClick += dgvData_CellClick_1;
+            dgvData.CellContentClick += dgvData_CellContentClick;
+            // 
+            // btnViewReview
+            // 
+            btnViewReview.HeaderText = "Review";
+            btnViewReview.MinimumWidth = 6;
+            btnViewReview.Name = "btnViewReview";
+            btnViewReview.Text = "Review";
+            btnViewReview.UseColumnTextForButtonValue = true;
+            btnViewReview.Width = 125;
             // 
             // btnSearch
             // 
@@ -72,6 +83,7 @@
             Controls.Add(dgvData);
             Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -82,5 +94,6 @@
         private DataGridView dgvData;
         private Button btnSearch;
         private TextBox txtSearch;
+        private DataGridViewButtonColumn btnViewReview;
     }
 }
