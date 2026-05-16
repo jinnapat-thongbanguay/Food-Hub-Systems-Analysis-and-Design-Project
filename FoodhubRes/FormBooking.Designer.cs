@@ -1,20 +1,15 @@
-﻿using System;
-using System.Data;
-using System.Drawing; 
-using System.Windows.Forms;
-using Npgsql;
-
-namespace FoodhubRes
+﻿namespace FoodhubRes
 {
     public partial class FormBooking : Form
     {
-        // เปลี่ยน Password และ Database ให้ตรงกับของคุณ
-        private string connString = "Host=localhost;Username=foodhub_admin;Password=AdminPass123;Database=FoodHubDB";
+    
+        // 📌 1. ต้องมี Constructor ตรงนี้ เพื่อให้ตอนเปิดโปรแกรมมันวาดหน้าต่างขึ้นมาได้
+        public FormBooking()
+        {
+            InitializeComponent();
+        }
 
-        // ตัวแปรสำหรับจำ ID ของรายการจองที่ถูกคลิก
-        private string selectedBookingId = "";
-
-        // 1. ต้องมี Constructor เพื่อเรียกให้หน้าต่างทำงาน
+        // 📌 2. นี่คือส่วน InitializeComponent (หน้าตา UI) 
         #region Windows Form Designer generated code
         private void InitializeComponent()
         {
@@ -25,9 +20,8 @@ namespace FoodhubRes
             btnCheckIn = new Button();
             btnNoshow = new Button();
             btnReject = new Button();
-            btnNewrequest= new Button();
-            dataGridView1 = new DataGridView();
             btnNewrequest = new Button();
+            dataGridView1 = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -134,6 +128,7 @@ namespace FoodhubRes
             Controls.Add(btnBack);
             Name = "FormBooking";
             Text = "FormBooking";
+            Load += FormBooking_Load; // 📌 ผูก Event Load ให้ทำงานตอนเปิดฟอร์ม
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -147,148 +142,7 @@ namespace FoodhubRes
         private Button btnNoshow;
         private Button btnReject;
         private DataGridView dataGridView1;
-        #endregion
-
-        // ---------------------------------------------------------
-        // ส่วนของฟังก์ชันการทำงาน (Database และ Event ปุ่ม)
-        // ---------------------------------------------------------
-
-        private void FormBooking_Load(object sender, EventArgs e)
-        {
-            LoadBookings("");
-        }
-
-        private void LoadBookings(string resId)
-        {
-            try
-            {
-                using (var conn = new NpgsqlConnection(connString))
-                {
-                    conn.Open();
-                    string sql = @"SELECT bookingid AS ""Booking ID"", 
-                                          customerid AS ""Customer ID"", 
-                                          restaurantid AS ""Restaurant ID"", 
-                                          bookingdate AS ""เวลาที่จอง"", 
-                                          status AS ""สถานะ""
-                                   FROM bookings";
-
-                    if (!string.IsNullOrEmpty(resId))
-                    {
-                        sql += $" WHERE restaurantid = {resId}";
-                    }
-
-                    sql += " ORDER BY bookingdate DESC";
-
-                    using (var cmd = new NpgsqlCommand(sql, conn))
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        DataTable dt = new DataTable();
-                        dt.Load(reader);
-                        dataGridView1.DataSource = dt;
-                        dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error ในการดึงข้อมูล: " + ex.Message);
-            }
-        }
-
-        private void btnEnter_Click(object sender, EventArgs e)
-        {
-            LoadBookings(textBox1.Text);
-        }
-
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
-                selectedBookingId = row.Cells["Booking ID"].Value.ToString();
-            }
-        }
-
-        private void UpdateBookingStatus(string newStatus)
-        {
-            if (string.IsNullOrEmpty(selectedBookingId))
-            {
-                MessageBox.Show("กรุณาคลิกเลือกรายการจองในตารางก่อนครับ", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // 1. ดึงข้อมูลจากแถวที่คุณเลือกในตารางมาเตรียมไว้
-            string customerId = "ไม่พบข้อมูล";
-            string bookingDate = "ไม่พบข้อมูล";
-
-            foreach (DataGridViewRow row in dataGridView1.Rows)
-            {
-                if (row.Cells["Booking ID"].Value?.ToString() == selectedBookingId)
-                {
-                    customerId = row.Cells["Customer ID"].Value.ToString();
-                    bookingDate = row.Cells["เวลาที่จอง"].Value.ToString();
-                    break;
-                }
-            }
-
-            try
-            {
-                using (var conn = new NpgsqlConnection(connString))
-                {
-                    conn.Open();
-                    string sql = "UPDATE bookings SET status = @status WHERE bookingid = @id";
-                    using (var cmd = new NpgsqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("status", newStatus);
-                        cmd.Parameters.AddWithValue("id", int.Parse(selectedBookingId));
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            // 2. สร้างข้อความแจ้งเตือน (Popup) นำข้อมูลมาแสดง
-                            string message = $"อัปเดตสถานะสำเร็จ!\n\n" +
-                                             $"🔹 ไอดีลูกค้า: {customerId}\n" +
-                                             $"🔹 เวลาที่จอง: {bookingDate}\n" +
-                                             $"🔹 สถานะล่าสุด: {newStatus}";
-
-                            MessageBox.Show(message, "ข้อมูลการจอง", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                            // โหลดตารางใหม่และล้างค่าที่จำไว้
-                            LoadBookings(textBox1.Text);
-                            selectedBookingId = "";
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error ในการอัปเดตสถานะ: " + ex.Message);
-            }
-        }
-
-        private void btnCheckIn_Click(object sender, EventArgs e)
-        {
-            UpdateBookingStatus("CheckedIn");
-        }
-
-        private void btnNoshow_Click(object sender, EventArgs e)
-        {
-            UpdateBookingStatus("NoShow");
-        }
-
-        private void btnNewrequest_Click(object sender, EventArgs e)
-        {
-            UpdateBookingStatus("NewRequest");
-        }
-        private void btnReject_Click(object sender, EventArgs e)
-        {
-            UpdateBookingStatus("Closed");
-        }
-
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
         private Button btnNewrequest;
+        #endregion
     }
 }

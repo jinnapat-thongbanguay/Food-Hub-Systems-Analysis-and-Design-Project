@@ -124,8 +124,6 @@
 
         private DataGridView dgvRestaurants;
         private Button btnLoad;
-        private Button btnPromoActive;
-        private Button btnCustomerCheckIn;
         private Button btnAdmin;
         private Button button1;
     }

@@ -1,95 +1,75 @@
 ﻿using System;
 using System.Data;
+using System.Drawing;
+using System.Net.Http;
+using System.Net.Http.Json; // สำหรับรับส่ง JSON
 using System.Windows.Forms;
-using Npgsql;
 
 namespace FoodhubRes
 {
     public partial class FormAdmin : Form
     {
-        // ใช้สิทธิ์ Admin ตามที่ตั้งไว้
-        private string connString = "Host=localhost;Username=foodhub_admin;Password=AdminPass123;Database=FoodHubDB";
+        // URL ของ API (เปลี่ยนพอร์ตให้ตรงกับเครื่องคุณ เช่น 7001)
+        private readonly string apiUrl = "https://localhost:7001/api/promotions";
 
         public FormAdmin()
         {
             InitializeComponent();
         }
 
-        // --- 1. โหลดโปรโมชั่นทั้งหมด (รวมชื่อร้านจากตาราง Restaurants) ---
-        private void LoadAllPromotions()
+        // =======================================================
+        // ⚠️ โค้ดส่วน InitializeComponent() และตัวแปรปุ่มต่างๆ ของคุณจะอยู่ตรงนี้ 
+        // ไม่ต้องไปลบมันนะครับ ปล่อยไว้เหมือนเดิม
+        // =======================================================
+
+        // --- 1. โหลดโปรโมชั่นทั้งหมด (ผ่าน API) ---
+        private void FormAdmin_Load(object sender, EventArgs e)
         {
-            string sql = @"SELECT p.promotionid AS ""ID"", r.name AS ""ชื่อร้าน"", 
-                           p.name AS ""ชื่อโปรโมชั่น"", p.discountamount AS ""ส่วนลด"", p.status AS ""สถานะ""
-                           FROM Promotions p
-                           JOIN Restaurants r ON p.restaurantid = r.restaurantid
-                           ORDER BY p.promotionid ASC";
-            ExecuteQuery(sql);
+            LoadPromotions("");
         }
 
-        // --- 2. ฟังก์ชันกลางสำหรับรัน SELECT และแสดงผลใน DataGridView ---
-        private void ExecuteQuery(string sql)
+        private async void LoadPromotions(string resId)
         {
             try
             {
-                using (var conn = new NpgsqlConnection(connString))
+                using (HttpClient client = new HttpClient())
                 {
-                    conn.Open();
-                    using (var cmd = new NpgsqlCommand(sql, conn))
-                    {
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            DataTable dt = new DataTable();
-                            dt.Load(reader);
-                            dataGridView1.DataSource = dt;
-                            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                        }
-                    }
+                    string url = string.IsNullOrEmpty(resId) ? apiUrl : $"{apiUrl}?resId={resId}";
+                    var data = await client.GetFromJsonAsync<object>(url);
+
+                    dataGridView1.DataSource = data;
+                    dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "ข้อผิดพลาด", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error ในการดึงข้อมูลผ่าน API: " + ex.Message, "ข้อผิดพลาด");
             }
         }
 
-        // --- 3. ปุ่ม ENTER (ค้นหาโปรโมชั่นตาม ID ร้านอาหาร) ---
+        // --- 2. ปุ่ม ENTER (ค้นหาโปรโมชั่นตาม ID ร้านอาหาร) ---
         private void button1_Click(object sender, EventArgs e)
         {
-            string resId = btnSearch.Text;
-
-            if (string.IsNullOrEmpty(resId))
-            {
-                LoadAllPromotions();
-                return;
-            }
-
-            // ค้นหาโดยจอยตารางเพื่อให้ได้ Format หัวตารางเหมือนกัน
-            string sql = $@"SELECT p.promotionid AS ""ID"", r.name AS ""ชื่อร้าน"", 
-                           p.name AS ""ชื่อโปรโมชั่น"", p.discountamount AS ""ส่วนลด"", p.status AS ""สถานะ""
-                           FROM Promotions p
-                           JOIN Restaurants r ON p.restaurantid = r.restaurantid
-                           WHERE p.restaurantid = {resId}";
-            ExecuteQuery(sql);
+            // ใช้ btnSearch.Text ค้นหาตามโค้ดเดิมของคุณ
+            LoadPromotions(btnSearch.Text);
         }
 
-        // --- 4. คลิกแถวในตาราง แล้วข้อมูลเด้งเข้า TextBox ---
+        // --- 3. คลิกแถวในตาราง แล้วข้อมูลเด้งเข้า TextBox ---
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0) // ตรวจสอบว่าไม่ได้คลิกโดนหัวตาราง
+            if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                // ดึงข้อมูลจาก Column ตามชื่อที่เราตั้งไว้ใน SQL (AS "...")
-                txtPromoId.Text = row.Cells["ID"].Value.ToString();
-                txtPromoName.Text = row.Cells["ชื่อโปรโมชั่น"].Value.ToString();
-                txtDiscount.Text = row.Cells["ส่วนลด"].Value.ToString();
-                txtPromoStatus.Text = row.Cells["สถานะ"].Value.ToString();
+                txtPromoId.Text = row.Cells["ID"].Value?.ToString();
+                txtPromoName.Text = row.Cells["ชื่อโปรโมชั่น"].Value?.ToString();
+                txtDiscount.Text = row.Cells["ส่วนลด"].Value?.ToString();
+                txtPromoStatus.Text = row.Cells["สถานะ"].Value?.ToString();
             }
         }
 
-        // --- 5. ปุ่มสำหรับบันทึกการแก้ไข (Update) ---
-        // (คุณต้องสร้างปุ่มใหม่ชื่อ btnUpdate หรือดับเบิลคลิกที่ปุ่ม Enter เดิมถ้าจะใช้ร่วมกัน)
-        private void btnUpdate_Click(object sender, EventArgs e)
+        // --- 4. ปุ่มสำหรับบันทึกการแก้ไข (Update ผ่าน PUT) ---
+        private async void btnUpdate_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtPromoId.Text))
             {
@@ -99,39 +79,36 @@ namespace FoodhubRes
 
             try
             {
-                using (var conn = new NpgsqlConnection(connString))
+                using (HttpClient client = new HttpClient())
                 {
-                    conn.Open();
-                    string sql = @"UPDATE Promotions 
-                                   SET name = @name, 
-                                       discountamount = @discount, 
-                                       status = @status 
-                                   WHERE promotionid = @id";
-
-                    using (var cmd = new NpgsqlCommand(sql, conn))
+                    var updateData = new
                     {
-                        cmd.Parameters.AddWithValue("name", txtPromoName.Text);
-                        cmd.Parameters.AddWithValue("discount", decimal.Parse(txtDiscount.Text));
-                        cmd.Parameters.AddWithValue("status", txtPromoStatus.Text);
-                        cmd.Parameters.AddWithValue("id", int.Parse(txtPromoId.Text));
+                        Name = txtPromoName.Text,
+                        DiscountAmount = decimal.Parse(txtDiscount.Text),
+                        Status = txtPromoStatus.Text
+                    };
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            MessageBox.Show("แก้ไขโปรโมชั่นสำเร็จ! ✨");
-                            LoadAllPromotions(); // รีเฟรชตาราง
-                        }
+                    var response = await client.PutAsJsonAsync($"{apiUrl}/{txtPromoId.Text}", updateData);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("แก้ไขโปรโมชั่นสำเร็จ! ✨");
+                        LoadPromotions(""); // รีเฟรชตาราง
+                    }
+                    else
+                    {
+                        MessageBox.Show("ไม่สามารถแก้ไขได้ Status Code: " + response.StatusCode);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error ในการแก้ไข: " + ex.Message);
+                MessageBox.Show("Error ในการแก้ไขผ่าน API: " + ex.Message);
             }
         }
 
-        // --- 6. ปุ่ม DELETE (ลบโปรโมชั่น) ---
-        private void btnDelete_Click(object sender, EventArgs e)
+        // --- 5. ปุ่ม DELETE (ลบโปรโมชั่นผ่าน DELETE) ---
+        private async void btnDelete_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtPromoId.Text))
             {
@@ -144,39 +121,42 @@ namespace FoodhubRes
             {
                 try
                 {
-                    using (var conn = new NpgsqlConnection(connString))
+                    using (HttpClient client = new HttpClient())
                     {
-                        conn.Open();
-                        string sql = "DELETE FROM Promotions WHERE promotionid = @id";
-                        using (var cmd = new NpgsqlCommand(sql, conn))
+                        var response = await client.DeleteAsync($"{apiUrl}/{txtPromoId.Text}");
+
+                        if (response.IsSuccessStatusCode)
                         {
-                            cmd.Parameters.AddWithValue("id", int.Parse(txtPromoId.Text));
-                            cmd.ExecuteNonQuery();
                             MessageBox.Show("ลบสำเร็จ!");
-                            LoadAllPromotions();
+                            LoadPromotions(""); // รีเฟรชตาราง
+
                             // เคลียร์ค่าในช่องกรอก
-                            txtPromoId.Clear(); txtPromoName.Clear(); txtDiscount.Clear(); txtPromoStatus.Clear();
+                            txtPromoId.Clear();
+                            txtPromoName.Clear();
+                            txtDiscount.Clear();
+                            txtPromoStatus.Clear();
+                        }
+                        else
+                        {
+                            MessageBox.Show("ไม่สามารถลบได้ Status Code: " + response.StatusCode);
                         }
                     }
                 }
-                catch (Exception ex) { MessageBox.Show(ex.Message); }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error ในการลบผ่าน API: " + ex.Message);
+                }
             }
         }
 
-        // --- 7. ปุ่ม BACK ---
+        // --- 6. ปุ่ม BACK ---
         private void btnBack_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void FormAdmin_Load(object sender, EventArgs e)
-        {
-            LoadAllPromotions();
-        }
-
         private void label2_Click(object sender, EventArgs e)
         {
-
         }
     }
 }
