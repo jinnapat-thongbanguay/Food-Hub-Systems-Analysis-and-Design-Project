@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\janja\\OneDrive - Srinakharinwirot University\\SASD2025\\FoodhubRes\\FoodhubRes\\FoodhubRes.csproj": {}
+    "C:\\Users\\jutha\\source\\repos\\Food-Hub-Systems-Analysis-and-Design-Project\\FoodhubRes\\FoodhubRes.csproj": {}
   },
   "projects": {
-    "C:\\Users\\janja\\OneDrive - Srinakharinwirot University\\SASD2025\\FoodhubRes\\FoodhubRes\\FoodhubRes.csproj": {
+    "C:\\Users\\jutha\\source\\repos\\Food-Hub-Systems-Analysis-and-Design-Project\\FoodhubRes\\FoodhubRes.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\janja\\OneDrive - Srinakharinwirot University\\SASD2025\\FoodhubRes\\FoodhubRes\\FoodhubRes.csproj",
+        "projectUniqueName": "C:\\Users\\jutha\\source\\repos\\Food-Hub-Systems-Analysis-and-Design-Project\\FoodhubRes\\FoodhubRes.csproj",
         "projectName": "FoodhubRes",
-        "projectPath": "C:\\Users\\janja\\OneDrive - Srinakharinwirot University\\SASD2025\\FoodhubRes\\FoodhubRes\\FoodhubRes.csproj",
-        "packagesPath": "C:\\Users\\janja\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\janja\\OneDrive - Srinakharinwirot University\\SASD2025\\FoodhubRes\\FoodhubRes\\obj\\",
+        "projectPath": "C:\\Users\\jutha\\source\\repos\\Food-Hub-Systems-Analysis-and-Design-Project\\FoodhubRes\\FoodhubRes.csproj",
+        "packagesPath": "C:\\Users\\jutha\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jutha\\source\\repos\\Food-Hub-Systems-Analysis-and-Design-Project\\FoodhubRes\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\janja\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\jutha\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

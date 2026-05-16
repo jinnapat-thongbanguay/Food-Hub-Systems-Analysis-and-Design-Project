@@ -24,18 +24,18 @@ namespace FoodhubRes
             btnEnter = new Button();
             btnCheckIn = new Button();
             btnNoshow = new Button();
-            btnReject = new Button();
-            btnNewrequest= new Button();
+            btnCancelled = new Button();
+            btnConfirmed = new Button();
             dataGridView1 = new DataGridView();
-            btnNewrequest = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // btnBack
             // 
-            btnBack.Location = new Point(657, 29);
+            btnBack.Location = new Point(379, 14);
+            btnBack.Margin = new Padding(3, 2, 3, 2);
             btnBack.Name = "btnBack";
-            btnBack.Size = new Size(127, 48);
+            btnBack.Size = new Size(101, 36);
             btnBack.TabIndex = 0;
             btnBack.Text = "Back";
             btnBack.UseVisualStyleBackColor = true;
@@ -43,25 +43,27 @@ namespace FoodhubRes
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(44, 74);
+            textBox1.Location = new Point(38, 56);
+            textBox1.Margin = new Padding(3, 2, 3, 2);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(357, 27);
+            textBox1.Size = new Size(313, 23);
             textBox1.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(44, 29);
+            label1.Location = new Point(38, 22);
             label1.Name = "label1";
-            label1.Size = new Size(98, 20);
+            label1.Size = new Size(77, 15);
             label1.TabIndex = 2;
             label1.Text = "Restaurant ID";
             // 
             // btnEnter
             // 
-            btnEnter.Location = new Point(433, 72);
+            btnEnter.Location = new Point(379, 54);
+            btnEnter.Margin = new Padding(3, 2, 3, 2);
             btnEnter.Name = "btnEnter";
-            btnEnter.Size = new Size(115, 31);
+            btnEnter.Size = new Size(101, 23);
             btnEnter.TabIndex = 3;
             btnEnter.Text = "Enter";
             btnEnter.UseVisualStyleBackColor = true;
@@ -69,9 +71,10 @@ namespace FoodhubRes
             // 
             // btnCheckIn
             // 
-            btnCheckIn.Location = new Point(44, 140);
+            btnCheckIn.Location = new Point(38, 105);
+            btnCheckIn.Margin = new Padding(3, 2, 3, 2);
             btnCheckIn.Name = "btnCheckIn";
-            btnCheckIn.Size = new Size(120, 29);
+            btnCheckIn.Size = new Size(105, 22);
             btnCheckIn.TabIndex = 4;
             btnCheckIn.Text = "Check In";
             btnCheckIn.UseVisualStyleBackColor = true;
@@ -79,59 +82,64 @@ namespace FoodhubRes
             // 
             // btnNoshow
             // 
-            btnNoshow.Location = new Point(214, 140);
+            btnNoshow.Location = new Point(149, 105);
+            btnNoshow.Margin = new Padding(3, 2, 3, 2);
             btnNoshow.Name = "btnNoshow";
-            btnNoshow.Size = new Size(120, 29);
+            btnNoshow.Size = new Size(105, 22);
             btnNoshow.TabIndex = 5;
             btnNoshow.Text = "No Show";
             btnNoshow.UseVisualStyleBackColor = true;
             btnNoshow.Click += btnNoshow_Click;
             // 
-            // btnReject
+            // btnCancelled
             // 
-            btnReject.Location = new Point(596, 262);
-            btnReject.Name = "btnReject";
-            btnReject.Size = new Size(120, 29);
-            btnReject.TabIndex = 6;
-            btnReject.Text = "Reject";
-            btnReject.UseVisualStyleBackColor = true;
-            btnReject.Click += btnReject_Click;
+            btnCancelled.Location = new Point(375, 105);
+            btnCancelled.Margin = new Padding(3, 2, 3, 2);
+            btnCancelled.Name = "btnCancelled";
+            btnCancelled.Size = new Size(105, 22);
+            btnCancelled.TabIndex = 6;
+            btnCancelled.Text = "Cancelled";
+            btnCancelled.UseVisualStyleBackColor = true;
+            btnCancelled.Click += btnCancelled_Click;
+            // 
+            // btnConfirmed
+            // 
+            btnConfirmed.Location = new Point(260, 105);
+            btnConfirmed.Margin = new Padding(3, 2, 3, 2);
+            btnConfirmed.Name = "btnConfirmed";
+            btnConfirmed.Size = new Size(105, 22);
+            btnConfirmed.TabIndex = 8;
+            btnConfirmed.Text = "Confirmed";
+            btnConfirmed.UseVisualStyleBackColor = true;
+            btnConfirmed.Click += btnConfirmed_Click;
             // 
             // dataGridView1
             // 
             dataGridView1.BackgroundColor = SystemColors.ControlLightLight;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(44, 201);
+            dataGridView1.Location = new Point(38, 151);
+            dataGridView1.Margin = new Padding(3, 2, 3, 2);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(502, 206);
+            dataGridView1.Size = new Size(439, 154);
             dataGridView1.TabIndex = 7;
             dataGridView1.CellClick += dataGridView1_CellClick;
             // 
-            // btnNewrequest
-            // 
-            btnNewrequest.Location = new Point(433, 140);
-            btnNewrequest.Name = "btnNewrequest";
-            btnNewrequest.Size = new Size(120, 29);
-            btnNewrequest.TabIndex = 8;
-            btnNewrequest.Text = "New Request";
-            btnNewrequest.UseVisualStyleBackColor = true;
-            btnNewrequest.Click += btnNewrequest_Click;
-            // 
             // FormBooking
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(btnNewrequest);
+            ClientSize = new Size(700, 338);
+            Controls.Add(btnConfirmed);
             Controls.Add(dataGridView1);
-            Controls.Add(btnReject);
+            Controls.Add(btnCancelled);
             Controls.Add(btnNoshow);
             Controls.Add(btnCheckIn);
             Controls.Add(btnEnter);
             Controls.Add(label1);
             Controls.Add(textBox1);
             Controls.Add(btnBack);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "FormBooking";
             Text = "FormBooking";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
@@ -145,7 +153,7 @@ namespace FoodhubRes
         private Button btnEnter;
         private Button btnCheckIn;
         private Button btnNoshow;
-        private Button btnReject;
+        private Button btnCancelled;
         private DataGridView dataGridView1;
         #endregion
 
@@ -213,7 +221,7 @@ namespace FoodhubRes
         {
             if (string.IsNullOrEmpty(selectedBookingId))
             {
-                MessageBox.Show("กรุณาคลิกเลือกรายการจองในตารางก่อนครับ", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("กรุณาคลิกเลือกรายการจองในตารางก่อน", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -246,10 +254,10 @@ namespace FoodhubRes
                         if (rowsAffected > 0)
                         {
                             // 2. สร้างข้อความแจ้งเตือน (Popup) นำข้อมูลมาแสดง
-                            string message = $"อัปเดตสถานะสำเร็จ!\n\n" +
-                                             $"🔹 ไอดีลูกค้า: {customerId}\n" +
-                                             $"🔹 เวลาที่จอง: {bookingDate}\n" +
-                                             $"🔹 สถานะล่าสุด: {newStatus}";
+                            string message = $"อัปเดตสถานะสำเร็จ\n\n" +
+                                             $"ไอดีลูกค้า: {customerId}\n" +
+                                             $"เวลาที่จอง: {bookingDate}\n" +
+                                             $"สถานะล่าสุด: {newStatus}";
 
                             MessageBox.Show(message, "ข้อมูลการจอง", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -276,19 +284,33 @@ namespace FoodhubRes
             UpdateBookingStatus("NoShow");
         }
 
-        private void btnNewrequest_Click(object sender, EventArgs e)
+        private void btnConfirmed_Click(object sender, EventArgs e)
         {
-            UpdateBookingStatus("NewRequest");
+            UpdateBookingStatus("Confirmed");
         }
-        private void btnReject_Click(object sender, EventArgs e)
+        private void btnCancelled_Click(object sender, EventArgs e)
         {
-            UpdateBookingStatus("Closed");
+            // 1. เช็คก่อนว่าผู้ใช้ได้คลิกเลือกรายการจองจากตาราง (DataGridView) หรือยัง
+            if (string.IsNullOrEmpty(selectedBookingId))
+            {
+                MessageBox.Show("กรุณาคลิกเลือกรายการจองในตารางก่อน", "แจ้งเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 2. ขึ้นกล่องข้อความให้กดยืนยันเพื่อความชัวร์ จะได้ไม่เผลอไปกดโดน
+            var confirm = MessageBox.Show($"คุณต้องการยกเลิกรายการจองรหัส: {selectedBookingId} ใช่หรือไม่?", "ยืนยันการยกเลิก", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (confirm == DialogResult.Yes)
+            {
+                // 3. ส่งสถานะ 'Cancelled' เข้าไปอัปเดตที่ฟังก์ชันศูนย์กลาง (UpdateBookingStatus) ทันที
+                UpdateBookingStatus("Cancelled");
+            }
         }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-        private Button btnNewrequest;
+        private Button btnConfirmed;
     }
 }

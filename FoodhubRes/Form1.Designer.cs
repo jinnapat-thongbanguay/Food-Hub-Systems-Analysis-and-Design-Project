@@ -31,8 +31,7 @@
             dgvRestaurants = new DataGridView();
             btnLoad = new Button();
             btnPromoActive = new Button();
-            btnCustomerCheckIn = new Button();
-            btnAdmin = new Button();
+            btnManagePromotion = new Button();
             button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvRestaurants).BeginInit();
             SuspendLayout();
@@ -41,18 +40,20 @@
             // 
             dgvRestaurants.BackgroundColor = SystemColors.ControlLightLight;
             dgvRestaurants.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvRestaurants.Location = new Point(310, 35);
+            dgvRestaurants.Location = new Point(174, 26);
+            dgvRestaurants.Margin = new Padding(3, 2, 3, 2);
             dgvRestaurants.Name = "dgvRestaurants";
             dgvRestaurants.RowHeadersWidth = 51;
-            dgvRestaurants.Size = new Size(466, 295);
+            dgvRestaurants.Size = new Size(505, 221);
             dgvRestaurants.TabIndex = 0;
             // 
             // btnLoad
             // 
-            btnLoad.Font = new Font("Book Antiqua", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnLoad.Location = new Point(48, 35);
+            btnLoad.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnLoad.Location = new Point(12, 26);
+            btnLoad.Margin = new Padding(3, 2, 3, 2);
             btnLoad.Name = "btnLoad";
-            btnLoad.Size = new Size(158, 59);
+            btnLoad.Size = new Size(138, 44);
             btnLoad.TabIndex = 1;
             btnLoad.Text = "restaurant";
             btnLoad.UseVisualStyleBackColor = true;
@@ -60,43 +61,35 @@
             // 
             // btnPromoActive
             // 
-            btnPromoActive.Font = new Font("Book Antiqua", 9F);
-            btnPromoActive.Location = new Point(48, 154);
+            btnPromoActive.Font = new Font("Microsoft Sans Serif", 9F);
+            btnPromoActive.Location = new Point(12, 113);
+            btnPromoActive.Margin = new Padding(3, 2, 3, 2);
             btnPromoActive.Name = "btnPromoActive";
-            btnPromoActive.Size = new Size(158, 60);
+            btnPromoActive.Size = new Size(138, 45);
             btnPromoActive.TabIndex = 2;
             btnPromoActive.Text = "Promotion";
             btnPromoActive.UseVisualStyleBackColor = true;
             btnPromoActive.Click += btnPromoActive_Click;
             // 
-            // btnCustomerCheckIn
+            // btnManagePromotion
             // 
-            btnCustomerCheckIn.Font = new Font("Book Antiqua", 9F);
-            btnCustomerCheckIn.Location = new Point(48, 270);
-            btnCustomerCheckIn.Name = "btnCustomerCheckIn";
-            btnCustomerCheckIn.Size = new Size(158, 60);
-            btnCustomerCheckIn.TabIndex = 3;
-            btnCustomerCheckIn.Text = "Customer";
-            btnCustomerCheckIn.UseVisualStyleBackColor = true;
-            btnCustomerCheckIn.Click += btnCustomerCheckIn_Click;
-            // 
-            // btnAdmin
-            // 
-            btnAdmin.Font = new Font("Book Antiqua", 9F);
-            btnAdmin.Location = new Point(618, 360);
-            btnAdmin.Name = "btnAdmin";
-            btnAdmin.Size = new Size(158, 60);
-            btnAdmin.TabIndex = 4;
-            btnAdmin.Text = "Admin  mode";
-            btnAdmin.UseVisualStyleBackColor = true;
-            btnAdmin.Click += btnAdmin_Click;
+            btnManagePromotion.Font = new Font("Microsoft Sans Serif", 9F);
+            btnManagePromotion.Location = new Point(550, 270);
+            btnManagePromotion.Margin = new Padding(3, 2, 3, 2);
+            btnManagePromotion.Name = "btnManagePromotion";
+            btnManagePromotion.Size = new Size(138, 45);
+            btnManagePromotion.TabIndex = 4;
+            btnManagePromotion.Text = "Manage Promotion";
+            btnManagePromotion.UseVisualStyleBackColor = true;
+            btnManagePromotion.Click += btnManagePromotion_Click;
             // 
             // button1
             // 
-            button1.Font = new Font("Book Antiqua", 9F);
-            button1.Location = new Point(310, 360);
+            button1.Font = new Font("Microsoft Sans Serif", 9F);
+            button1.Location = new Point(174, 270);
+            button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(158, 60);
+            button1.Size = new Size(138, 45);
             button1.TabIndex = 5;
             button1.Text = "Booking";
             button1.UseVisualStyleBackColor = true;
@@ -104,16 +97,16 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources._1;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(700, 338);
             Controls.Add(button1);
-            Controls.Add(btnAdmin);
-            Controls.Add(btnCustomerCheckIn);
+            Controls.Add(btnManagePromotion);
             Controls.Add(btnPromoActive);
             Controls.Add(btnLoad);
             Controls.Add(dgvRestaurants);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "Form1";
             Text = "Restaurant";
             ((System.ComponentModel.ISupportInitialize)dgvRestaurants).EndInit();
@@ -125,8 +118,7 @@
         private DataGridView dgvRestaurants;
         private Button btnLoad;
         private Button btnPromoActive;
-        private Button btnCustomerCheckIn;
-        private Button btnAdmin;
+        private Button btnManagePromotion;
         private Button button1;
     }
 }
