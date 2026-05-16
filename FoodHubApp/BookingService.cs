@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Npgsql;
+using NpgsqlTypes;
+using System;
 using System.Data;
-using Npgsql;
 
 namespace FoodHubApp
 {
@@ -89,6 +90,43 @@ namespace FoodHubApp
             new NpgsqlParameter("people", people)
         };
                 return db.ExecuteNonQuery(sql, params_list);
+            }
+            catch { return false; }
+        }
+
+        // 1. ค้นหาประวัติการจองเฉพาะของเบอร์โทรนั้น และสถานะยังเป็น Confirmed
+        public DataTable GetBookingsByPhone(string phone)
+        {
+            try
+            {
+                // แก้ไขเงื่อนไข WHERE: เปลี่ยนจาก b.status = 'Confirmed' 
+                // เป็น b.status != 'Cancelled' (แปลว่า เอาทุกสถานะยกเว้นตัวที่ยกเลิกไปแล้ว)
+                string sql = @"SELECT b.bookingid, r.name as restaurant_name, b.bookingdate, b.numberofpeople, b.status 
+                      FROM bookings b
+                      JOIN customers c ON b.customerid = c.customerid
+                      JOIN restaurants r ON b.restaurantid = r.restaurantid
+                      WHERE c.phone = @phone AND b.status != 'Cancelled'
+                      ORDER BY b.bookingdate DESC";
+
+                var param = new NpgsqlParameter("phone", NpgsqlTypes.NpgsqlDbType.Varchar);
+                param.Value = phone.Trim();
+
+                return db.ExecuteQuery(sql, new[] { param });
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        // 2. อัปเดตสถานะในตาราง bookings ให้เป็น 'Cancelled'
+        public bool CancelBooking(int bookingId)
+        {
+            try
+            {
+                string sql = "UPDATE bookings SET status = 'Cancelled' WHERE bookingid = @bid";
+                var param = new[] { new NpgsqlParameter("bid", bookingId) };
+                return db.ExecuteNonQuery(sql, param);
             }
             catch { return false; }
         }

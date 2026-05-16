@@ -29,9 +29,11 @@
         private void InitializeComponent()
         {
             dgvData = new DataGridView();
-            btnViewReview = new DataGridViewButtonColumn();
             btnSearch = new Button();
             txtSearch = new TextBox();
+            btnManageBooking = new Button();
+            btnOpenReview = new Button();
+            btnViewReview = new DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             SuspendLayout();
             // 
@@ -39,21 +41,12 @@
             // 
             dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvData.Columns.AddRange(new DataGridViewColumn[] { btnViewReview });
-            dgvData.Location = new Point(164, 118);
+            dgvData.Location = new Point(164, 159);
             dgvData.Name = "dgvData";
             dgvData.RowHeadersWidth = 51;
             dgvData.Size = new Size(498, 247);
             dgvData.TabIndex = 0;
             dgvData.CellContentClick += dgvData_CellContentClick;
-            // 
-            // btnViewReview
-            // 
-            btnViewReview.HeaderText = "Review";
-            btnViewReview.MinimumWidth = 6;
-            btnViewReview.Name = "btnViewReview";
-            btnViewReview.Text = "Review";
-            btnViewReview.UseColumnTextForButtonValue = true;
-            btnViewReview.Width = 125;
             // 
             // btnSearch
             // 
@@ -71,13 +64,43 @@
             txtSearch.Name = "txtSearch";
             txtSearch.Size = new Size(344, 27);
             txtSearch.TabIndex = 2;
-            txtSearch.TextChanged += txtSearch_TextChanged_1;
+            // 
+            // btnManageBooking
+            // 
+            btnManageBooking.Location = new Point(527, 25);
+            btnManageBooking.Name = "btnManageBooking";
+            btnManageBooking.Size = new Size(135, 26);
+            btnManageBooking.TabIndex = 3;
+            btnManageBooking.Text = "History";
+            btnManageBooking.UseVisualStyleBackColor = true;
+            btnManageBooking.Click += btnManageBooking_Click;
+            // 
+            // btnOpenReview
+            // 
+            btnOpenReview.Location = new Point(525, 109);
+            btnOpenReview.Name = "btnOpenReview";
+            btnOpenReview.Size = new Size(137, 25);
+            btnOpenReview.TabIndex = 4;
+            btnOpenReview.Text = "Write Review";
+            btnOpenReview.UseVisualStyleBackColor = true;
+            btnOpenReview.Click += btnOpenReview_Click;
+            // 
+            // btnViewReview
+            // 
+            btnViewReview.HeaderText = "Review";
+            btnViewReview.MinimumWidth = 6;
+            btnViewReview.Name = "btnViewReview";
+            btnViewReview.Text = "Review";
+            btnViewReview.UseColumnTextForButtonValue = true;
+            btnViewReview.Width = 125;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnOpenReview);
+            Controls.Add(btnManageBooking);
             Controls.Add(txtSearch);
             Controls.Add(btnSearch);
             Controls.Add(dgvData);
@@ -94,6 +117,8 @@
         private DataGridView dgvData;
         private Button btnSearch;
         private TextBox txtSearch;
+        private Button btnManageBooking;
+        private Button btnOpenReview;
         private DataGridViewButtonColumn btnViewReview;
     }
 }
