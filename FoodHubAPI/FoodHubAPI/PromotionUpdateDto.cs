@@ -1,9 +1,16 @@
-﻿namespace FoodHubAPI.Models // เปลี่ยนชื่อ namespace ให้ตรงกับโปรเจกต์ของคุณ
+﻿using System;
+
+namespace FoodHubAPI.Models
 {
     public class PromotionUpdateDto
     {
-        public string Name { get; set; }
+        public int RestaurantId { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public decimal DiscountAmount { get; set; }
-        public string Status { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }

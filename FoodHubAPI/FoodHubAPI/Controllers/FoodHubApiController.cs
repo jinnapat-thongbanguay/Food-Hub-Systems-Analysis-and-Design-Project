@@ -10,7 +10,7 @@ namespace FoodHubAPI.Controllers
     [Route("api/foodhubapi")]
     public class FoodHubApiController : ControllerBase // 2. เปลี่ยนจาก Controller เป็น ControllerBase
     {
-        // 👇 วาง connString ไว้ตรงนี้เลยครับ (อยู่ในคลาส แต่อยู่นอกฟังก์ชัน) 👇
+        // connString 
         private readonly string connString = "Host=localhost;Username=foodhub_admin;Password=AdminPass123;Database=FoodHubDB";
 
         // 3. สร้าง Endpoint สำหรับดึงข้อมูลร้านอาหาร
@@ -27,6 +27,7 @@ namespace FoodHubAPI.Controllers
                 return StatusCode(500, new { message = ex.Message }); // ถ้า Error ให้โชว์สาเหตุ
             }
         }
+
         // --- ส่วนที่ต้องเพิ่ม: Endpoint สำหรับดึงข้อมูลโปรโมชันที่ Active ---
         [HttpGet("promotions/Active")]
         public IActionResult GetActivePromotions()
@@ -35,22 +36,6 @@ namespace FoodHubAPI.Controllers
             {
                 // ⚠️ หมายเหตุ: ลองเช็คชื่อคอลัมน์และตารางใน pgAdmin อีกทีว่าเขียนแบบนี้ไหม
                 string sql = "SELECT * FROM promotions WHERE status = 'Active'";
-                return Ok(ExecuteQueryFromDb(sql));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
-        }
-
-        // --- ส่วนที่ต้องเพิ่ม: Endpoint สำหรับดึงข้อมูลลูกค้าที่ Check-in แล้ว ---
-        [HttpGet("bookings/CheckedIn")]
-        public IActionResult GetCheckedInBookings()
-        {
-            try
-            {
-                // ⚠️ หมายเหตุ: ลองเช็คชื่อคอลัมน์และตารางใน pgAdmin อีกทีว่าเขียนแบบนี้ไหม
-                string sql = "SELECT * FROM bookings WHERE status = 'Checked In'";
                 return Ok(ExecuteQueryFromDb(sql));
             }
             catch (Exception ex)

@@ -1,17 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
+using System.Collections.Generic;
 using System.Data;
-using FoodHubAPI.Models; // อ้างอิงไปยังโฟลเดอร์โมเดลของคุณ
+using FoodHubAPI.Models;
 
 [ApiController]
 [Route("api/[controller]")]
 public class BookingsController : ControllerBase
 {
-    private readonly string connString = "Host=localhost;Username=foodhub_admin;Password=AdminPass123;Database=FoodHubDB";
+    private readonly string connString;
 
-    // 1. GET: api/bookings (โหลดข้อมูลการจองทั้งหมด หรือกรองตาม Restaurant ID)
+    public BookingsController(IConfiguration configuration)
+    {
+        // connString = configuration.GetConnectionString("DefaultConnection");
+        connString = "Host=localhost;Username=foodhub_admin;Password=AdminPass123;Database=FoodHubDB";
+    }
+
+    // 1. GET: api/bookings
+    // เปลี่ยน resId เป็น int? เพื่อป้องกันคนพิมพ์ตัวอักษรเข้ามา
     [HttpGet]
-    public IActionResult GetBookings([FromQuery] string resId = "")
+    public IActionResult GetBookings([FromQuery] int? resId = null)
     {
         string sql = @"SELECT bookingid AS ""Booking ID"", 
                               customerid AS ""Customer ID"", 
@@ -20,17 +29,22 @@ public class BookingsController : ControllerBase
                               status AS ""สถานะ""
                        FROM bookings";
 
-        if (!string.IsNullOrEmpty(resId))
+        var parameters = new List<NpgsqlParameter>();
+
+        // ตรวจสอบว่ามีการส่ง resId มาหรือไม่
+        if (resId.HasValue)
         {
-            sql += $" WHERE restaurantid = {resId}";
+            // ใช้ Parameterized Query ป้องกัน SQL Injection
+            sql += " WHERE restaurantid = @resId";
+            parameters.Add(new NpgsqlParameter("resId", resId.Value));
         }
 
         sql += " ORDER BY bookingdate DESC";
 
-        return Ok(ExecuteQueryFromDb(sql));
+        return Ok(ExecuteQueryFromDb(sql, parameters.ToArray()));
     }
 
-    // 2. PUT: api/bookings/{id}/status (อัปเดตสถานะการจอง)
+    // 2. PUT: api/bookings/{id}/status 
     [HttpPut("{id}/status")]
     public IActionResult UpdateStatus(int id, [FromBody] BookingUpdateDto dto)
     {
@@ -54,24 +68,32 @@ public class BookingsController : ControllerBase
         }
     }
 
-    // ฟังก์ชันช่วยแปลงข้อมูลตารางออกมาเป็น JSON
-    private List<Dictionary<string, object>> ExecuteQueryFromDb(string sql)
+    // ปรับปรุงฟังก์ชันนี้ให้รองรับการส่ง Parameters เข้าไปใน SQL ด้วย
+    private List<Dictionary<string, object>> ExecuteQueryFromDb(string sql, NpgsqlParameter[] parameters = null)
     {
         var rows = new List<Dictionary<string, object>>();
         using (var conn = new NpgsqlConnection(connString))
         {
             conn.Open();
             using (var cmd = new NpgsqlCommand(sql, conn))
-            using (var reader = cmd.ExecuteReader())
             {
-                while (reader.Read())
+                // ถ้ามี Parameter ให้เพิ่มเข้าไปใน Command
+                if (parameters != null)
                 {
-                    var row = new Dictionary<string, object>();
-                    for (int i = 0; i < reader.FieldCount; i++)
+                    cmd.Parameters.AddRange(parameters);
+                }
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
                     {
-                        row[reader.GetName(i)] = reader.GetValue(i);
+                        var row = new Dictionary<string, object>();
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            row[reader.GetName(i)] = reader.GetValue(i);
+                        }
+                        rows.Add(row);
                     }
-                    rows.Add(row);
                 }
             }
         }

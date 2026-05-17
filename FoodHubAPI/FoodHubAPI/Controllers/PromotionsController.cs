@@ -1,206 +1,149 @@
 ﻿using FoodHubAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Configuration;
 using Npgsql;
-
-using System.Data;
-
-
+using System;
+using System.Collections.Generic;
 
 [ApiController]
-
 [Route("api/[controller]")]
-
 public class PromotionsController : ControllerBase
-
 {
+    private readonly string connString;
 
-    private readonly string connString = "Host=localhost;Username=foodhub_admin;Password=AdminPass123;Database=FoodHubDB";
+    public PromotionsController(IConfiguration configuration)
+    {
+        // connString = configuration.GetConnectionString("DefaultConnection");
+        connString = "Host=localhost;Username=foodhub_admin;Password=AdminPass123;Database=FoodHubDB";
+    }
 
-
-
-    // 1. GET: api/promotions (โหลดโปรโมชั่นทั้งหมด)
-
+    // 1. GET: api/promotions (ดึงทั้งหมด หรือค้นหาตาม resId)
     [HttpGet]
-
-    public IActionResult GetAllPromotions()
-
+    public IActionResult GetPromotions([FromQuery] int? resId = null)
     {
-
-        string sql = @"SELECT p.promotionid AS ""ID"", r.name AS ""ชื่อร้าน"", 
-
-                       p.name AS ""ชื่อโปรโมชั่น"", p.discountamount AS ""ส่วนลด"", p.status AS ""สถานะ""
-
+        // เพิ่ม Description, StartDate, EndDate เข้าไปใน SELECT ด้วย
+        string sql = @"SELECT p.promotionid AS ""promotionId"", r.name AS ""restaurantName"", 
+                              p.name AS ""name"", p.description AS ""description"", 
+                              p.discountamount AS ""discountAmount"", p.status AS ""status"",
+                              p.startdate AS ""startDate"", p.enddate AS ""endDate""
                        FROM Promotions p
+                       JOIN Restaurants r ON p.restaurantid = r.restaurantid";
 
-                       JOIN Restaurants r ON p.restaurantid = r.restaurantid
+        var parameters = new List<NpgsqlParameter>();
 
-                       ORDER BY p.promotionid ASC";
+        if (resId.HasValue)
+        {
+            sql += " WHERE p.restaurantid = @resId";
+            parameters.Add(new NpgsqlParameter("resId", resId.Value));
+        }
 
-        return Ok(ExecuteQueryFromDb(sql));
+        sql += " ORDER BY p.promotionid ASC";
 
+        return Ok(ExecuteQueryFromDb(sql, parameters.ToArray()));
     }
 
-
-
-    // 2. GET: api/promotions/search/{resId} (ค้นหาตาม ID ร้านอาหาร)
-
-    [HttpGet("search/{resId}")]
-
-    public IActionResult SearchByRestaurant(int resId)
-
+    // 2. POST: api/promotions (สร้างโปรโมชั่นใหม่)
+    [HttpPost]
+    public IActionResult CreatePromotion([FromBody] PromotionUpdateDto dto)
     {
+        string sql = @"INSERT INTO Promotions (restaurantid, name, description, discountamount, startdate, enddate, status) 
+                       VALUES (@resId, @name, @desc, @discount, @start, @end, @status)";
 
-        string sql = $@"SELECT p.promotionid AS ""ID"", r.name AS ""ชื่อร้าน"", 
+        using (var conn = new NpgsqlConnection(connString))
+        {
+            conn.Open();
+            using (var cmd = new NpgsqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddWithValue("resId", dto.RestaurantId);
+                cmd.Parameters.AddWithValue("name", dto.Name);
+                cmd.Parameters.AddWithValue("desc", dto.Description ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("discount", dto.DiscountAmount);
+                cmd.Parameters.AddWithValue("start", dto.StartDate);
+                cmd.Parameters.AddWithValue("end", dto.EndDate);
+                cmd.Parameters.AddWithValue("status", dto.Status ?? "Active");
 
-                       p.name AS ""ชื่อโปรโมชั่น"", p.discountamount AS ""ส่วนลด"", p.status AS ""สถานะ""
-
-                       FROM Promotions p
-
-                       JOIN Restaurants r ON p.restaurantid = r.restaurantid
-
-                       WHERE p.restaurantid = {resId}";
-
-        return Ok(ExecuteQueryFromDb(sql));
-
+                cmd.ExecuteNonQuery();
+                return Ok(new { message = "สร้างโปรโมชั่นสำเร็จ" });
+            }
+        }
     }
-
-
 
     // 3. PUT: api/promotions/{id} (แก้ไขโปรโมชั่น)
-
     [HttpPut("{id}")]
-
     public IActionResult UpdatePromotion(int id, [FromBody] PromotionUpdateDto dto)
-
     {
-
         string sql = @"UPDATE Promotions 
-
                        SET name = @name, 
-
+                           description = @desc,
                            discountamount = @discount, 
-
+                           startdate = @start,
+                           enddate = @end,
                            status = @status 
-
                        WHERE promotionid = @id";
 
-
-
         using (var conn = new NpgsqlConnection(connString))
-
         {
-
             conn.Open();
-
             using (var cmd = new NpgsqlCommand(sql, conn))
-
             {
-
                 cmd.Parameters.AddWithValue("name", dto.Name);
-
+                cmd.Parameters.AddWithValue("desc", dto.Description ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("discount", dto.DiscountAmount);
-
-                cmd.Parameters.AddWithValue("status", dto.Status);
-
+                cmd.Parameters.AddWithValue("start", dto.StartDate);
+                cmd.Parameters.AddWithValue("end", dto.EndDate);
+                cmd.Parameters.AddWithValue("status", dto.Status ?? "Active");
                 cmd.Parameters.AddWithValue("id", id);
 
-
-
                 int rowsAffected = cmd.ExecuteNonQuery();
-
                 if (rowsAffected > 0) return Ok(new { message = "แก้ไขสำเร็จ" });
-
                 return NotFound(new { message = "ไม่พบ ID โปรโมชั่นที่ระบุ" });
-
             }
-
         }
-
     }
-
-
 
     // 4. DELETE: api/promotions/{id} (ลบโปรโมชั่น)
-
     [HttpDelete("{id}")]
-
     public IActionResult DeletePromotion(int id)
-
     {
-
         string sql = "DELETE FROM Promotions WHERE promotionid = @id";
-
         using (var conn = new NpgsqlConnection(connString))
-
         {
-
             conn.Open();
-
             using (var cmd = new NpgsqlCommand(sql, conn))
-
             {
-
                 cmd.Parameters.AddWithValue("id", id);
-
                 int rowsAffected = cmd.ExecuteNonQuery();
-
                 if (rowsAffected > 0) return Ok(new { message = "ลบสำเร็จ" });
-
                 return NotFound(new { message = "ไม่พบ ID โปรโมชั่น" });
-
             }
-
         }
-
     }
 
-
-
-    // ฟังก์ชันช่วยดึงตารางออกมาเป็น List ของ Dictionary เพื่อปล่อยออกไปเป็น JSON
-
-    private List<Dictionary<string, object>> ExecuteQueryFromDb(string sql)
-
+    // ฟังก์ชันช่วยดึงตารางออกมาเป็น List ของ Dictionary (รองรับ Parameter)
+    private List<Dictionary<string, object>> ExecuteQueryFromDb(string sql, NpgsqlParameter[] parameters = null)
     {
-
         var rows = new List<Dictionary<string, object>>();
-
         using (var conn = new NpgsqlConnection(connString))
-
         {
-
             conn.Open();
-
             using (var cmd = new NpgsqlCommand(sql, conn))
-
-            using (var reader = cmd.ExecuteReader())
-
             {
+                if (parameters != null) cmd.Parameters.AddRange(parameters);
 
-                while (reader.Read())
-
+                using (var reader = cmd.ExecuteReader())
                 {
-
-                    var row = new Dictionary<string, object>();
-
-                    for (int i = 0; i < reader.FieldCount; i++)
-
+                    while (reader.Read())
                     {
-
-                        row[reader.GetName(i)] = reader.GetValue(i);
-
+                        var row = new Dictionary<string, object>();
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            row[reader.GetName(i)] = reader.GetValue(i);
+                        }
+                        rows.Add(row);
                     }
-
-                    rows.Add(row);
-
                 }
-
             }
-
         }
-
         return rows;
-
     }
-
 }
