@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "uhOsrNgISi0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Dewey\\Documents\\FoodHubApp-2\\FoodHubApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Dewey\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Dewey\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Dewey\\.nuget\\packages\\npgsql\\8.0.9\\npgsql.8.0.9.nupkg.sha512"
+  ],
+  "logs": []
+}
